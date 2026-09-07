@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control Union Perú · Banco de imágenes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;450;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FFFFFF;--ink:#0B0D0E;--ink-2:#666E72;--ink-3:#9AA1A4;
+  --line:#E7E9EA;--line-2:#111416;--accent:#00A3DE;--accent-deep:#0A6DA0;
+  --pad:clamp(20px,5vw,64px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1120px;margin:0 auto;padding:0 var(--pad)}
+::selection{background:var(--accent);color:#fff}
+a{color:inherit}
+
+.topbar{border-bottom:1px solid var(--line)}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:78px;gap:20px}
+.topbar img{height:30px;width:auto;display:block}
+.back{font-size:13px;color:var(--ink-2);text-decoration:none;display:inline-flex;align-items:center;gap:7px;transition:.15s}
+.back:hover{color:var(--accent-deep)}
+.back svg{width:15px;height:15px;stroke:currentColor}
+
+.hero{padding:clamp(44px,8vw,88px) 0 clamp(24px,4vw,40px)}
+.hero .kicker{font-size:13px;color:var(--ink-2);margin-bottom:20px}
+.hero h1{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(40px,7.5vw,76px);line-height:.98;letter-spacing:-.03em}
+.hero h1 .dot{color:var(--accent)}
+.hero .intro{margin-top:22px;font-size:clamp(15px,1.9vw,18px);color:var(--ink-2);max-width:54ch;font-weight:450}
+
+.controls{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-top:38px}
+.search{position:relative;flex:1;min-width:240px;max-width:420px}
+.search svg{position:absolute;left:2px;top:50%;transform:translateY(-50%);width:19px;height:19px;stroke:var(--ink)}
+#search{width:100%;padding:12px 4px 12px 32px;border:none;border-bottom:1.5px solid var(--line-2);background:transparent;color:var(--ink);font-family:inherit;font-size:16px;outline:none;transition:border-color .2s}
+#search::placeholder{color:var(--ink-3)}
+#search:focus{border-color:var(--accent)}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-family:inherit;font-size:13px;font-weight:500;padding:8px 15px;border:1px solid var(--line);border-radius:100px;background:transparent;color:var(--ink-2);cursor:pointer;transition:.15s}
+.chip:hover{border-color:var(--ink);color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+
+main{padding:clamp(28px,4vw,44px) 0 96px}
+.meta{font-size:13px;color:var(--ink-3);margin-bottom:20px;font-variant-numeric:tabular-nums;min-height:18px}
+
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.tile{position:relative;aspect-ratio:4/3;border:1px solid var(--line);border-radius:2px;overflow:hidden;cursor:pointer;background:#F3F5F6}
+.tile img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s ease;opacity:0}
+.tile img.loaded{opacity:1}
+.tile:hover img{transform:scale(1.04)}
+.tile .cap{position:absolute;left:0;right:0;bottom:0;padding:24px 12px 10px;font-size:12.5px;color:#fff;background:linear-gradient(transparent,rgba(11,13,14,.72));opacity:0;transition:.2s;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile:hover .cap{opacity:1}
+.tile .dl{position:absolute;top:9px;right:9px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;opacity:0;transform:translateY(-4px);transition:.2s;z-index:2}
+.tile:hover .dl{opacity:1;transform:none}
+.tile .dl:hover{background:#fff}
+.tile .dl svg{width:16px;height:16px;stroke:var(--ink)}
+
+.state{padding:70px 0;text-align:center;color:var(--ink-2);max-width:60ch;margin:0 auto}
+.state strong{display:block;font-family:'Archivo',sans-serif;font-size:22px;color:var(--ink);margin-bottom:10px}
+.state code{background:#F3F5F6;padding:2px 7px;border-radius:4px;font-size:13px}
+.spinner{width:34px;height:34px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%;margin:0 auto 22px;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Lightbox */
+.lb{position:fixed;inset:0;background:rgba(9,11,12,.985);display:none;flex-direction:column;z-index:80}
+.lb.open{display:flex}
+.lb-bar{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;color:#fff;gap:16px}
+.lb-name{font-size:14px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-actions{display:flex;gap:10px;flex-shrink:0}
+.lb-btn{font-family:inherit;font-size:13px;font-weight:600;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);padding:9px 16px;border-radius:100px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:.15s;text-decoration:none}
+.lb-btn:hover{background:rgba(255,255,255,.22)}
+.lb-btn svg{width:15px;height:15px;stroke:currentColor}
+.lb-btn.primary{background:var(--accent);border-color:var(--accent)}
+.lb-btn.primary:hover{background:var(--accent-deep)}
+.lb-stage{flex:1;display:flex;align-items:center;justify-content:center;padding:0 clamp(12px,6vw,80px) 30px;position:relative;min-height:0}
+.lb-stage img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;cursor:pointer;display:grid;place-items:center;transition:.15s}
+.lb-nav:hover{background:rgba(255,255,255,.22)}
+.lb-nav svg{width:22px;height:22px;stroke:currentColor}
+.lb-prev{left:clamp(10px,3vw,34px)}
+.lb-next{right:clamp(10px,3vw,34px)}
+@media (max-width:640px){.lb-nav{display:none}.topbar img{height:26px}}
+
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.reveal{animation:rise .6s cubic-bezier(.2,.7,.2,1) both}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <img src="./logo-control-union.png" alt="Control Union">
+    <a class="back" href="./index.html"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Volver al hub</a>
+  </div>
+</div>
+
+<header class="wrap hero">
+  <div class="kicker reveal">Recursos del equipo</div>
+  <h1 class="reveal" style="animation-delay:.05s">Banco de imágenes<span class="dot">.</span></h1>
+  <p class="intro reveal" style="animation-delay:.12s">Imágenes recopiladas para el equipo, listas para descargar y usar. Pasa el cursor sobre una imagen para descargarla, o ábrela para verla en grande.</p>
+  <div class="controls reveal" style="animation-delay:.18s">
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="search" type="search" placeholder="Buscar imagen…" autocomplete="off">
+    </div>
+    <div class="filters" id="filters"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="meta" id="meta"></div>
+  <div id="content">
+    <div class="state"><div class="spinner"></div>Cargando imágenes…</div>
+  </div>
+</main>
+
+<!-- Lightbox -->
+<div class="lb" id="lb" role="dialog" aria-modal="true">
+  <div class="lb-bar">
+    <span class="lb-name" id="lbName"></span>
+    <div class="lb-actions">
+      <button class="lb-btn primary" id="lbDownload"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13M7 12l5 5 5-5M5 21h14"/></svg>Descargar</button>
+      <button class="lb-btn" id="lbClose">Cerrar ✕</button>
+    </div>
+  </div>
+  <div class="lb-stage">
+    <button class="lb-nav lb-prev" id="lbPrev" aria-label="Anterior"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <img id="lbImg" src="" alt="">
+    <button class="lb-nav lb-next" id="lbNext" aria-label="Siguiente"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   CONFIGURACIÓN — solo cambia esto si renombras el repositorio.
+     REPO_OWNER : tu usuario de GitHub
+     REPO_NAME  : el nombre del repositorio
+     REPO_BRANCH: la rama (normalmente "main")
+     IMG_PATH   : la carpeta donde subes las imágenes
+   Cómo agregar imágenes: sube tus archivos a la carpeta "img" del
+   repositorio. Si creas subcarpetas dentro de "img" (p. ej.
+   img/eventos, img/marca), cada una aparece como filtro. ¡Eso es todo!
+   ══════════════════════════════════════════════════════════════ */
+const REPO_OWNER  = "MicaCervantes";
+const REPO_NAME   = "Index";
+const REPO_BRANCH = "main";
+const IMG_PATH    = "img";
+
+const EXT = /\.(jpe?g|png|gif|webp|avif|svg)$/i;
+const api = p => `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${p}?ref=${REPO_BRANCH}`;
+const prettify = f => f.replace(EXT,'').replace(/[-_]+/g,' ').replace(/\s+/g,' ').trim();
+
+let IMAGES=[], activeCat='Todas', query='';
+const content=document.getElementById('content');
+const metaEl=document.getElementById('meta');
+const filtersEl=document.getElementById('filters');
+const searchEl=document.getElementById('search');
+
+async function load(){
+  try{
+    const root = await fetch(api(IMG_PATH)).then(r=>{if(!r.ok)throw new Error(r.status);return r.json();});
+    const files = root.filter(i=>i.type==='file'&&EXT.test(i.name)).map(i=>({name:i.name,url:i.download_url,cat:'General'}));
+    const dirs = root.filter(i=>i.type==='dir');
+    for(const d of dirs){
+      try{
+        const sub = await fetch(api(d.path)).then(r=>r.json());
+        sub.filter(i=>i.type==='file'&&EXT.test(i.name)).forEach(i=>files.push({name:i.name,url:i.download_url,cat:d.name}));
+      }catch(e){}
+    }
+    IMAGES=files;
+    if(!IMAGES.length){ showEmpty(); return; }
+    buildFilters();
+    render();
+  }catch(err){
+    showError(err.message);
+  }
+}
+
+function buildFilters(){
+  const cats=[...new Set(IMAGES.map(i=>i.cat))];
+  const hasReal = !(cats.length===1 && cats[0]==='General');
+  if(!hasReal){ filtersEl.style.display='none'; return; }
+  ['Todas',...cats].forEach(c=>{
+    const b=document.createElement('button');
+    b.className='chip';b.textContent=c;b.setAttribute('aria-pressed',c==='Todas');
+    b.onclick=()=>{activeCat=c;[...filtersEl.children].forEach(x=>x.setAttribute('aria-pressed',x.textContent===c));render();};
+    filtersEl.appendChild(b);
+  });
+}
+
+function visible(){
+  return IMAGES.filter(i=>{
+    const okCat=activeCat==='Todas'||i.cat===activeCat;
+    const okQ=!query||prettify(i.name).toLowerCase().includes(query)||i.name.toLowerCase().includes(query);
+    return okCat&&okQ;
+  });
+}
+
+function render(){
+  const list=visible();
+  metaEl.textContent = list.length + (list.length===1?' imagen':' imágenes');
+  if(!list.length){ content.innerHTML='<div class="state"><strong>Sin resultados</strong>Prueba con otra palabra o quita los filtros.</div>'; return; }
+  const gal=document.createElement('div');gal.className='gal';
+  list.forEach((im,idx)=>{
+    const t=document.createElement('div');t.className='tile';
+    t.innerHTML=`
+      <img loading="lazy" alt="${prettify(im.name)}">
+      <button class="dl" title="Descargar" aria-label="Descargar"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13M7 12l5 5 5-5M5 21h14"/></svg></button>
+      <span class="cap">${prettify(im.name)}</span>`;
+    const img=t.querySelector('img');
+    img.onload=()=>img.classList.add('loaded');
+    img.src=im.url;
+    t.querySelector('.dl').onclick=e=>{e.stopPropagation();download(im);};
+    t.onclick=()=>openLB(list,idx);
+    gal.appendChild(t);
+  });
+  content.innerHTML='';content.appendChild(gal);
+}
+
+/* Descarga forzada (funciona aunque la imagen esté en otro dominio) */
+async function download(im){
+  try{
+    const blob = await fetch(im.url).then(r=>r.blob());
+    const u=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=u;a.download=im.name;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(u),1500);
+  }catch(e){
+    window.open(im.url,'_blank'); // respaldo: abre en pestaña nueva
+  }
+}
+
+/* Lightbox */
+const lb=document.getElementById('lb'),lbImg=document.getElementById('lbImg'),lbName=document.getElementById('lbName');
+let lbList=[],lbIdx=0;
+function openLB(list,idx){lbList=list;lbIdx=idx;showLB();lb.classList.add('open');}
+function showLB(){const im=lbList[lbIdx];lbImg.src=im.url;lbImg.alt=prettify(im.name);lbName.textContent=prettify(im.name);}
+function closeLB(){lb.classList.remove('open');lbImg.src='';}
+function step(n){lbIdx=(lbIdx+n+lbList.length)%lbList.length;showLB();}
+document.getElementById('lbClose').onclick=closeLB;
+document.getElementById('lbPrev').onclick=()=>step(-1);
+document.getElementById('lbNext').onclick=()=>step(1);
+document.getElementById('lbDownload').onclick=()=>download(lbList[lbIdx]);
+lb.onclick=e=>{if(e.target===lb||e.target.classList.contains('lb-stage'))closeLB();};
+document.addEventListener('keydown',e=>{
+  if(!lb.classList.contains('open'))return;
+  if(e.key==='Escape')closeLB();
+  if(e.key==='ArrowLeft')step(-1);
+  if(e.key==='ArrowRight')step(1);
+});
+
+searchEl.addEventListener('input',e=>{query=e.target.value.trim().toLowerCase();render();});
+
+function showEmpty(){
+  content.innerHTML=`<div class="state"><strong>Aún no hay imágenes</strong>
+    Sube tus archivos a la carpeta <code>${IMG_PATH}</code> del repositorio en GitHub y aparecerán aquí automáticamente.
+    Puedes crear subcarpetas (por ejemplo <code>${IMG_PATH}/eventos</code>) y cada una se convertirá en un filtro.</div>`;
+  metaEl.textContent='';
+}
+function showError(code){
+  const local = location.protocol==='file:';
+  content.innerHTML=`<div class="state"><strong>No se pudieron cargar las imágenes</strong>
+    ${local
+      ? 'Esta galería lee las imágenes desde GitHub, así que funciona una vez publicada en GitHub Pages, no al abrir el archivo localmente.'
+      : `Revisa que exista la carpeta <code>${IMG_PATH}</code> en el repositorio <code>${REPO_OWNER}/${REPO_NAME}</code> y que tenga imágenes. (Detalle técnico: ${code})`}
+  </div>`;
+  metaEl.textContent='';
+}
+
+load();
+</script>
+</body>
+</html>
