@@ -4,13 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Control Union Perú · Banco de imágenes</title>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#0c9de5">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="CU Herramientas">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;450;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --paper:#FFFFFF;--ink:#0B0D0E;--ink-2:#666E72;--ink-3:#9AA1A4;
-  --line:#E7E9EA;--line-2:#111416;--accent:#00A3DE;--accent-deep:#0A6DA0;
+  --line:#E7E9EA;--line-2:#111416;--accent:#0c9de5;--accent-deep:#0a78b5;
   --pad:clamp(20px,5vw,64px);
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -153,7 +159,12 @@ const IMG_PATH    = "img";
 
 const EXT = /\.(jpe?g|png|gif|webp|avif|svg)$/i;
 const api = p => `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${p}?ref=${REPO_BRANCH}`;
-const prettify = f => f.replace(EXT,'').replace(/[-_]+/g,' ').replace(/\s+/g,' ').trim();
+const prettify = f => f.replace(EXT,'').replace(/[-_]+/g,' ').replace(/\s+/g,' ').trim()
+  .replace(/\b\w/g,c=>c.toUpperCase());
+const CAT_LABELS = {"food-safety":"Food Safety","fsc":"FSC","iscc":"ISCC","organico":"Orgánico"};
+const catLabel = c => c==='Todas' ? 'Todas' : (CAT_LABELS[c.toLowerCase()] || c.replace(/[-_]+/g,' ').replace(/\b\w/g,x=>x.toUpperCase()));
+// Deriva la categoría del nombre del archivo: "acuicultura-01.jpg" -> "acuicultura"
+const catFromName = name => { const m = name.replace(EXT,'').match(/^(.+)-\d+$/); return m ? m[1].toLowerCase() : 'General'; };
 
 let IMAGES=[], activeCat='Todas', query='';
 const content=document.getElementById('content');
@@ -164,7 +175,7 @@ const searchEl=document.getElementById('search');
 async function load(){
   try{
     const root = await fetch(api(IMG_PATH)).then(r=>{if(!r.ok)throw new Error(r.status);return r.json();});
-    const files = root.filter(i=>i.type==='file'&&EXT.test(i.name)).map(i=>({name:i.name,url:i.download_url,cat:'General'}));
+    const files = root.filter(i=>i.type==='file'&&EXT.test(i.name)).map(i=>({name:i.name,url:i.download_url,cat:catFromName(i.name)}));
     const dirs = root.filter(i=>i.type==='dir');
     for(const d of dirs){
       try{
@@ -187,8 +198,8 @@ function buildFilters(){
   if(!hasReal){ filtersEl.style.display='none'; return; }
   ['Todas',...cats].forEach(c=>{
     const b=document.createElement('button');
-    b.className='chip';b.textContent=c;b.setAttribute('aria-pressed',c==='Todas');
-    b.onclick=()=>{activeCat=c;[...filtersEl.children].forEach(x=>x.setAttribute('aria-pressed',x.textContent===c));render();};
+    b.className='chip';b.textContent=catLabel(c);b.dataset.cat=c;b.setAttribute('aria-pressed',c==='Todas');
+    b.onclick=()=>{activeCat=c;[...filtersEl.children].forEach(x=>x.setAttribute('aria-pressed',x.dataset.cat===c));render();};
     filtersEl.appendChild(b);
   });
 }
@@ -272,6 +283,9 @@ function showError(code){
 }
 
 load();
+</script>
+<script>
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
 </script>
 </body>
 </html>

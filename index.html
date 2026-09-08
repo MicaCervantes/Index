@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Control Union Perú · Hub de herramientas</title>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#0c9de5">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="CU Herramientas">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;450;500;600&display=swap" rel="stylesheet">
@@ -18,9 +25,9 @@
   --ink-3:#9AA1A4;
   --line:#E7E9EA;
   --line-2:#111416;
-  --accent:#00A3DE;
-  --accent-deep:#0A6DA0;
-  --grey:#6E8A8A;
+  --accent:#0c9de5;
+  --accent-deep:#0a78b5;
+  --grey:#759192;
   --pad:clamp(20px,5vw,64px);
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -56,10 +63,12 @@ body{
 #search::placeholder{color:var(--ink-3)}
 #search:focus{border-color:var(--accent)}
 .filters{display:flex;gap:6px;flex-wrap:wrap}
-.chip{font-family:inherit;font-size:13px;font-weight:500;padding:8px 15px;border:1px solid var(--line);border-radius:100px;background:transparent;color:var(--ink-2);cursor:pointer;transition:.15s}
+.chip{font-family:inherit;font-size:13px;font-weight:500;padding:8px 15px;border:1px solid var(--line);border-radius:100px;background:transparent;color:var(--ink-2);cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:7px}
 .chip:hover{border-color:var(--ink);color:var(--ink)}
 .chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
-.chip.new-chip{display:inline-flex;align-items:center;gap:6px}
+.chip .cdot{width:7px;height:7px;border-radius:50%;background:var(--cat,var(--ink-3))}
+.chip[data-cat][aria-pressed="true"]{background:var(--cat);border-color:var(--cat);color:#fff}
+.chip[data-cat][aria-pressed="true"] .cdot{background:#fff}
 .chip.new-chip::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}
 .chip.new-chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
 .chip.new-chip[aria-pressed="true"]::before{background:#fff}
@@ -67,30 +76,32 @@ body{
 /* DIRECTORIO */
 main{padding-bottom:96px}
 .cat{padding-top:clamp(40px,6vw,64px)}
-.cat-head{display:flex;align-items:baseline;gap:16px;padding-bottom:6px}
+.cat-head{display:flex;align-items:baseline;gap:13px;padding-bottom:6px}
+.cat-head .cdot{width:11px;height:11px;border-radius:50%;background:var(--cat,var(--line-strong));align-self:center;flex-shrink:0}
 .cat-head h2{font-family:'Archivo',sans-serif;font-weight:700;font-size:clamp(20px,2.6vw,26px);letter-spacing:-.02em;white-space:nowrap}
-.cat-head .rule{flex:1;height:1px;background:var(--line);transform:translateY(-4px)}
-.cat-head .count{font-size:13px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.cat-head .rule{flex:1;height:2px;background:linear-gradient(90deg,var(--cat,var(--line-strong)) 0 44px,var(--line) 44px);transform:translateY(-4px)}
+.cat-head .count{font-size:13px;color:var(--cat,var(--ink-3));font-weight:600;font-variant-numeric:tabular-nums}
 
-.row{position:relative;border-top:1px solid var(--line)}
+.row{position:relative;border-top:1px solid var(--line);border-left:3px solid transparent;transition:border-color .2s ease}
 .cat .row:last-child{border-bottom:1px solid var(--line)}
 .row-inner{display:grid;grid-template-columns:1fr auto;align-items:center;gap:20px;padding:26px 4px 26px 0;transition:padding-left .25s ease}
-.row:hover .row-inner{padding-left:14px}
+.row:hover{border-left-color:var(--cat,var(--ink))}
+.row:hover .row-inner{padding-left:17px}
 .row-main{min-width:0}
 .row-title{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-family:'Archivo',sans-serif;font-weight:600;font-size:clamp(18px,2.2vw,22px);letter-spacing:-.01em;line-height:1.2}
 .row-title a{color:inherit;text-decoration:none}
-.tag-new{font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-deep);display:inline-flex;align-items:center;gap:5px}
-.tag-new::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.tag-new{font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--cat,var(--accent-deep));display:inline-flex;align-items:center;gap:5px}
+.tag-new::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--cat,var(--accent))}
 .row-desc{color:var(--ink-2);font-size:15px;margin-top:7px;max-width:64ch;font-weight:450}
 .row-side{display:flex;align-items:center;gap:22px}
 .cfg-link{position:relative;z-index:2;font-family:inherit;font-size:13px;font-weight:500;color:var(--ink-2);background:none;border:none;cursor:pointer;padding:6px 0;border-bottom:1px solid var(--line-2);transition:.15s;white-space:nowrap}
-.cfg-link:hover{color:var(--accent-deep);border-color:var(--accent)}
+.cfg-link:hover{color:var(--cat,var(--accent-deep));border-color:var(--cat,var(--accent))}
 .arrow{width:44px;height:44px;flex-shrink:0;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;transition:.2s ease}
 .arrow svg{width:17px;height:17px;stroke:var(--ink);transition:.2s ease}
-.row:hover .arrow{background:var(--ink);border-color:var(--ink)}
+.row:hover .arrow{background:var(--cat,var(--ink));border-color:var(--cat,var(--ink))}
 .row:hover .arrow svg{stroke:#fff;transform:translate(2px,-2px)}
 .stretch::after{content:"";position:absolute;inset:0;z-index:1}
-.row:has(.stretch:focus-visible){outline:2px solid var(--accent);outline-offset:-2px}
+.row:has(.stretch:focus-visible){outline:2px solid var(--cat,var(--accent));outline-offset:-2px}
 
 .empty{padding:90px 0;text-align:center;color:var(--ink-2)}
 .empty strong{display:block;font-family:'Archivo',sans-serif;font-size:22px;color:var(--ink);margin-bottom:6px}
@@ -118,6 +129,10 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
 .copybtn:hover{background:var(--accent-deep)}
 .copybtn.done{background:var(--accent)}
 .note{font-size:13.5px;color:var(--ink-2);margin-top:8px}
+.modal-sub{font-family:'Archivo',sans-serif;font-weight:700;font-size:15px;margin:24px 0 16px;display:flex;align-items:center;gap:9px}
+.modal-sub:first-child{margin-top:0}
+.modal-sub svg{width:18px;height:18px;stroke:var(--accent);flex-shrink:0}
+.callout{margin-top:22px;border-left:2px solid var(--accent);background:#F3FAFE;padding:13px 15px;font-size:13.5px;color:var(--ink-2)}
 
 @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .reveal{animation:rise .6s cubic-bezier(.2,.7,.2,1) both}
@@ -189,6 +204,42 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
   </div>
 </div>
 
+<!-- Modal: instalar como app -->
+<div class="overlay" id="overlayApp">
+  <div class="modal reveal" role="dialog" aria-modal="true" aria-labelledby="appTitle">
+    <div class="modal-head">
+      <h2 id="appTitle">Instalar como app</h2>
+      <p>Puedes instalar el formulario en el celular como si fuera una app, con su propio ícono en la pantalla de inicio.</p>
+      <button class="modal-close" id="appClose" aria-label="Cerrar">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-sub">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+        Android (Chrome)
+      </div>
+      <ol class="steps">
+        <li>Entra al enlace de la versión que quieras instalar (online u offline).</li>
+        <li>Toca el menú de tres puntitos (⋮) arriba a la derecha del navegador.</li>
+        <li>Elige <b>“Instalar aplicación”</b> (o <b>“Agregar a pantalla de inicio”</b>, según la versión de Chrome).</li>
+        <li>Confirma tocando <b>“Instalar”</b>.</li>
+        <li>Aparecerá un ícono en la pantalla de inicio del celular, igual que cualquier otra app.</li>
+      </ol>
+      <div class="modal-sub">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18h2"/></svg>
+        iPhone (Safari)
+      </div>
+      <ol class="steps">
+        <li>Entra al enlace de la versión que quieras instalar. Tiene que ser desde <b>Safari</b>; desde Chrome en iPhone no funciona igual.</li>
+        <li>Toca el ícono de <b>compartir</b> (el cuadradito con la flecha hacia arriba, abajo al centro).</li>
+        <li>Desliza hacia abajo en el menú y elige <b>“Agregar a pantalla de inicio”</b>.</li>
+        <li>Toca <b>“Agregar”</b> arriba a la derecha.</li>
+        <li>Igual que en Android, quedará un ícono en la pantalla de inicio.</li>
+      </ol>
+      <div class="callout">Como cada versión (online y offline) es independiente, puedes instalar las dos por separado, cada una con su propio ícono, y usar la que corresponda según el lugar.</div>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ══════════════════════════════════════════════════════════════
    👉 EDITA AQUÍ: la única parte que necesitas tocar.
@@ -197,18 +248,25 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
    ══════════════════════════════════════════════════════════════ */
 const ORDEN_CATEGORIAS = ["Eventos","Cotizaciones","Prospección comercial","Recursos"];
 
+const CAT_COLORS = {
+  "Eventos":               "#0c9de5",
+  "Cotizaciones":          "#14a06b",
+  "Prospección comercial": "#180b5d",
+  "Recursos":              "#ee7f2c"
+};
+
 const HERRAMIENTAS = [
   {
     nombre:"Formulario de captación — En línea",
     url:"https://micacervantes.github.io/captacion-cu/online/Captacion_CU_Online.html",
     descripcion:"Registro de captación en eventos. Versión recomendada para el uso habitual (requiere señal).",
-    categoria:"Eventos", nueva:true, config:true
+    categoria:"Eventos", nueva:true, config:true, app:true
   },
   {
     nombre:"Formulario de captación — Sin conexión",
     url:"https://micacervantes.github.io/captacion-cu/offline/Captacion_CU_Offline.html",
     descripcion:"La misma captación para cuando no haya señal. Los registros se envían después.",
-    categoria:"Eventos", nueva:true
+    categoria:"Eventos", nueva:true, app:true
   },
   {
     nombre:"Reporte de cierre de stand",
@@ -243,7 +301,9 @@ let activeCat='Todas', onlyNew=false, query='';
 
 ['Todas',...ORDEN_CATEGORIAS].forEach(c=>{
   const b=document.createElement('button');
-  b.className='chip';b.textContent=c;b.setAttribute('aria-pressed',c==='Todas');
+  b.className='chip';b.setAttribute('aria-pressed',c==='Todas');
+  if(CAT_COLORS[c]){b.dataset.cat=c;b.style.setProperty('--cat',CAT_COLORS[c]);b.innerHTML=`<span class="cdot"></span>${c}`;}
+  else{b.textContent=c;}
   b.onclick=()=>{activeCat=c;onlyNew=false;sync();render();};
   filtersEl.appendChild(b);
 });
@@ -265,6 +325,7 @@ function match(h){
   return okCat&&okNew&&okQ;
 }
 function rowHTML(h){
+  const app=h.app?`<button class="cfg-link" data-app="1">Instalar como app</button>`:'';
   const cfg=h.config?`<button class="cfg-link" data-config="1">Configuración inicial</button>`:'';
   const tag=h.nueva?`<span class="tag-new">Nuevo</span>`:'';
   return `<div class="row">
@@ -276,7 +337,7 @@ function rowHTML(h){
         <div class="row-desc">${h.descripcion}</div>
       </div>
       <div class="row-side">
-        ${cfg}
+        ${app}${cfg}
         <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
       </div>
     </div>
@@ -292,13 +353,15 @@ function render(){
   ORDEN_CATEGORIAS.forEach(cat=>{
     const items=visible.filter(h=>h.categoria===cat);
     if(!items.length)return;
-    html+=`<section class="cat">
-      <div class="cat-head"><h2>${cat}</h2><span class="rule"></span><span class="count">${String(items.length).padStart(2,'0')}</span></div>
+    const color=CAT_COLORS[cat]||'#6E8A8A';
+    html+=`<section class="cat" style="--cat:${color}">
+      <div class="cat-head"><span class="cdot"></span><h2>${cat}</h2><span class="rule"></span><span class="count">${String(items.length).padStart(2,'0')}</span></div>
       ${items.map(rowHTML).join('')}
     </section>`;
   });
   main.innerHTML=html;
   main.querySelectorAll('[data-config]').forEach(b=>b.onclick=ev=>{ev.preventDefault();openModal();});
+  main.querySelectorAll('[data-app]').forEach(b=>b.onclick=ev=>{ev.preventDefault();openApp();});
 }
 
 const overlay=document.getElementById('overlay');
@@ -306,7 +369,14 @@ const openModal=()=>overlay.classList.add('open');
 const closeModal=()=>overlay.classList.remove('open');
 document.getElementById('modalClose').onclick=closeModal;
 overlay.onclick=e=>{if(e.target===overlay)closeModal();};
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+const overlayApp=document.getElementById('overlayApp');
+const openApp=()=>overlayApp.classList.add('open');
+const closeApp=()=>overlayApp.classList.remove('open');
+document.getElementById('appClose').onclick=closeApp;
+overlayApp.onclick=e=>{if(e.target===overlayApp)closeApp();};
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeApp();}});
 document.getElementById('copyBtn').onclick=function(){
   navigator.clipboard.writeText(document.getElementById('cfgUrl').textContent).then(()=>{
     this.textContent='✓ Copiado';this.classList.add('done');
@@ -315,6 +385,12 @@ document.getElementById('copyBtn').onclick=function(){
 };
 
 render();
+</script>
+<script>
+/* Registro del service worker: hace la app instalable y que abra sin conexión. */
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+}
 </script>
 </body>
 </html>
